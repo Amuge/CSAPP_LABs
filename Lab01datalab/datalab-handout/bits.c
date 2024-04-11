@@ -1,8 +1,8 @@
-/* 
- * CS:APP Data Lab 
- * 
+/*
+ * CS:APP Data Lab
+ *
  * <Please put your name and userid here>
- * 
+ *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -10,7 +10,7 @@
  * compiler. You can still use printf for debugging without including
  * <stdio.h>, although you might get a compiler warning. In general,
  * it's not good practice to ignore compiler warnings, but in this
- * case it's OK.  
+ * case it's OK.
  */
 
 #if 0
@@ -132,42 +132,54 @@ NOTES:
  *      the correct answers.
  */
 
-
 #endif
-//1
-/* 
- * bitXor - x^y using only ~ and & 
+// 1
+/*
+ * bitXor - x^y using only ~ and &
  *   Example: bitXor(4, 5) = 1
  *   Legal ops: ~ &
  *   Max ops: 14
  *   Rating: 1
  */
-int bitXor(int x, int y) {
-  return 2;
+int bitXor(int x, int y)
+{
+  /*
+    x ^ y = (x & (~y)) | ((~x) & y)
+    x | y = ~((~x) & (~y))
+  */
+  return ~(~(~x & y) & ~(x & ~y));
 }
-/* 
- * tmin - return minimum two's complement integer 
+/*
+ * tmin - return minimum two's complement integer
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 4
  *   Rating: 1
  */
-int tmin(void) {
-
-  return 2;
-
+int tmin(void)
+{
+  return 0x1 << 31;
 }
-//2
+// 2
 /*
  * isTmax - returns 1 if x is the maximum, two's complement number,
- *     and 0 otherwise 
+ *     and 0 otherwise
  *   Legal ops: ! ~ & ^ | +
  *   Max ops: 10
  *   Rating: 1
  */
-int isTmax(int x) {
-  return 2;
+int isTmax(int x)
+{
+  /*
+    Tmax + 1 = Tmin
+    (Tmin ^ Tmax) + 1 = 0
+    '-1' also fits the above situation,so we need another criteria
+    !!(Tmax + 1) = !!Tmin = 1,!!(-1 + 1) = !!0 = 0
+  */
+  int first_judge = !(((x + 1) ^ x) + 1);
+  int second_judge = !!(x + 1);
+  return first_judge & second_judge;
 }
-/* 
+/*
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
  *   where bits are numbered from 0 (least significant) to 31 (most significant)
  *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
@@ -175,21 +187,27 @@ int isTmax(int x) {
  *   Max ops: 12
  *   Rating: 2
  */
-int allOddBits(int x) {
-  return 2;
+int allOddBits(int x)
+{
+  // 构造掩码
+  int odd_mask = 0xAA;
+  odd_mask = odd_mask | odd_mask << 8;
+  odd_mask = odd_mask | odd_mask << 16;
+  return !((x & odd_mask) ^ odd_mask);
 }
-/* 
- * negate - return -x 
+/*
+ * negate - return -x
  *   Example: negate(1) = -1.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 5
  *   Rating: 2
  */
-int negate(int x) {
-  return 2;
+int negate(int x)
+{
+  return ~x + 1;
 }
-//3
-/* 
+// 3
+/*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
  *   Example: isAsciiDigit(0x35) = 1.
  *            isAsciiDigit(0x3a) = 0.
@@ -198,40 +216,63 @@ int negate(int x) {
  *   Max ops: 15
  *   Rating: 3
  */
-int isAsciiDigit(int x) {
-  return 2;
+int isAsciiDigit(int x)
+{
+  /*
+    UpperBound : adding a number greater than 0x39 to it will overflow and become a negative number
+    LowerBound ：adding a number less than 0x30 to it will result in a negative number
+  */
+  int sign = 0x1 << 31;
+  int lower_bound = ~0x30 + 1;
+  int upper_bound = ~sign + (~0x39 + 1); // ~sign is Tmax
+  int flag1 = sign & (x + lower_bound) >> 31;
+  int flag2 = sign & (x + upper_bound) >> 31;
+  return !(flag1 | flag2);
 }
-/* 
- * conditional - same as x ? y : z 
+/*
+ * conditional - same as x ? y : z
  *   Example: conditional(2,4,5) = 4
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 16
  *   Rating: 3
  */
-int conditional(int x, int y, int z) {
-  return 2;
+int conditional(int x, int y, int z)
+{
+  // -1 -> 0xFFFF
+  int flag = !!(x);
+  int mask = ~flag + 1;
+  return (mask & y) | (~mask & z);
 }
-/* 
- * isLessOrEqual - if x <= y  then return 1, else return 0 
+/*
+ * isLessOrEqual - if x <= y  then return 1, else return 0
  *   Example: isLessOrEqual(4,5) = 1.
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
  *   Rating: 3
  */
-int isLessOrEqual(int x, int y) {
-  return 2;
+int isLessOrEqual(int x, int y)
+{
+  int sign_x = x >> 31;
+  int sign_y = y >> 31;
+  int same_sign = !(sign_x ^ sign_y);
+  int x_minus_y = x + (~y + 1);
+  int res_if_same_sign = same_sign & ((x_minus_y >> 31) | !(x_minus_y));
+  int res_if_diff_sign = (!same_sign) & (sign_x & ~sign_y);
+  return res_if_same_sign | res_if_diff_sign;
 }
-//4
-/* 
- * logicalNeg - implement the ! operator, using all of 
+// 4
+/*
+ * logicalNeg - implement the ! operator, using all of
  *              the legal operators except !
  *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
  *   Legal ops: ~ & ^ | + << >>
  *   Max ops: 12
- *   Rating: 4 
+ *   Rating: 4
  */
-int logicalNeg(int x) {
-  return 2;
+int logicalNeg(int x)
+{
+  //~0 + 1 == 0,(0->1,1->0,0->0),one line code,0和Tmin的补码为其自身原码
+  return ~(((~x + 1) | x) >> 31) & 0x1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -245,11 +286,29 @@ int logicalNeg(int x) {
  *  Max ops: 90
  *  Rating: 4
  */
-int howManyBits(int x) {
-  return 0;
+int howManyBits(int x)
+{
+  // 正数不变，负数取反，然后找最高的一位是1
+  int b16, b8, b4, b2, b1, b0;
+  int sign = x >> 31;
+  x = (~sign & x) | (sign & ~x);
+
+  b16 = !!(x >> 16) << 4; // 高16位是否有1
+  x = x >> b16;
+  b8 = !!(x >> 8) << 3;
+  x = x >> b8;
+  b4 = !!(x >> 4) << 2;
+  x = x >> b4;
+  b2 = !!(x >> 2) << 1;
+  x = x >> b2;
+  b1 = !!(x >> 1);
+  x = x >> b1;
+  b0 = x;
+
+  return b16 + b8 + b4 + b2 + b1 + b0 + 1;
 }
-//float
-/* 
+// float
+/*
  * floatScale2 - Return bit-level equivalent of expression 2*f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -260,10 +319,30 @@ int howManyBits(int x) {
  *   Max ops: 30
  *   Rating: 4
  */
-unsigned floatScale2(unsigned uf) {
+unsigned floatScale2(unsigned uf)
+{
+  unsigned sign = (uf >> 31) & 0x1;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac = (uf & 0x7FFFFF);
+
+  if (exp == 0xFF) // Infinity or NaN
+  {
+    return uf;
+  }
+  else if (exp == 0) // Denormalized
+  {
+    frac <<= 1;
+    return sign << 31 | exp << 23 | frac;
+  }
+  else // Normalized
+  {
+    exp++;
+    return sign << 31 | exp << 23 | frac;
+  }
+
   return 2;
 }
-/* 
+/*
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
  *   for floating point argument f.
  *   Argument is passed as unsigned int, but
@@ -275,10 +354,41 @@ unsigned floatScale2(unsigned uf) {
  *   Max ops: 30
  *   Rating: 4
  */
-int floatFloat2Int(unsigned uf) {
-  return 2;
+int floatFloat2Int(unsigned uf)
+{
+  unsigned sign = (uf >> 31) & 0x1;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac = (uf & 0x7FFFFF);
+
+  int E = exp - 127;
+  frac = frac | 0x1 << 23;
+
+  if (E < 0)
+  {
+    return 0;
+  }
+  else if (E >= 31) // 1 << 31会覆盖掉int符号位
+  {
+    return 0x1 << 31; // 0x80000000u
+  }
+  else // 0 <= E <= 30
+  {
+    if (E < 23) // 左移不够23位时，frac多余的部分得通过右移去掉
+    {
+      frac >>= (23 - E);
+    }
+    else
+    {
+      frac <<= (E - 23);
+    }
+  }
+
+  if (sign == 1)
+    frac = ~frac + 1;
+
+  return frac;
 }
-/* 
+/*
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
  *   (2.0 raised to the power x) for any 32-bit integer x.
  *
@@ -286,11 +396,28 @@ int floatFloat2Int(unsigned uf) {
  *   representation as the single-precision floating-point number 2.0^x.
  *   If the result is too small to be represented as a denorm, return
  *   0. If too large, return +INF.
- * 
- *   Legal ops: Any integer/unsigned operations incl. ||, &&. Also if, while 
- *   Max ops: 30 
+ *
+ *   Legal ops: Any integer/unsigned operations incl. ||, &&. Also if, while
+ *   Max ops: 30
  *   Rating: 4
  */
-unsigned floatPower2(int x) {
-    return 2;
+unsigned floatPower2(int x)
+{
+  /*
+    2.0^x = 1.0 * 2^x => sign = 0, frac = 0, exp = 127 + x,bit representation
+  */
+  int INF = 0xFF << 23;
+  int exp = 127 + x; // if 0 < exp < 255->Normalized
+  if (exp >= 255)    // too large
+    return INF;
+  int denorm_upper_bound = -126 - 1;  // f == 0x1000...0
+  int denorm_lower_bound = -126 - 23; // f == 0x0000...1
+  if (x < denorm_lower_bound)         // too small
+    return 0;
+  if (x >= denorm_lower_bound && x <= denorm_upper_bound) // Denormalized,M = f
+  {
+    return 0x1 << (x - denorm_upper_bound);
+  }
+
+  return exp << 23; // Normalized,M = 1+f, f = 0
 }
