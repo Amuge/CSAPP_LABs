@@ -170,7 +170,7 @@ int tmin(void)
 int isTmax(int x)
 {
   /*
-    Tmax + 1 = Tmin
+    Tmax + 1 = Tmin,x+1 == ~x
     (Tmin ^ Tmax) + 1 = 0
     '-1' also fits the above situation,so we need another criteria
     !!(Tmax + 1) = !!Tmin = 1,!!(-1 + 1) = !!0 = 0
@@ -271,8 +271,8 @@ int isLessOrEqual(int x, int y)
  */
 int logicalNeg(int x)
 {
-  //~0 + 1 == 0,(0->1,1->0,0->0),one line code,0和Tmin的补码为其自身原码
-  return ~(((~x + 1) | x) >> 31) & 0x1;
+  //~0 + 1 == 0,(0->1,1->0,0->0),one line code
+  return ~(((~x + 1) | x) >> 31) & 0x1; // 默认为算术右移，右移时会补充符号位
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
