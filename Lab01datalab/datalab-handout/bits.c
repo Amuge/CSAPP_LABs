@@ -339,8 +339,6 @@ unsigned floatScale2(unsigned uf)
     exp++;
     return sign << 31 | exp << 23 | frac;
   }
-
-  return 2;
 }
 /*
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -416,7 +414,7 @@ unsigned floatPower2(int x)
     return 0;
   if (x >= denorm_lower_bound && x <= denorm_upper_bound) // Denormalized,M = f
   {
-    return 0x1 << (x - denorm_upper_bound);
+    return 0x1 << (x - denorm_lower_bound);
   }
 
   return exp << 23; // Normalized,M = 1+f, f = 0
