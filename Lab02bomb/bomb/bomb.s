@@ -491,8 +491,8 @@ Disassembly of section .text:
   4010ac:	75 dd                	jne    40108b <phase_5+0x29>
   # --------------------------------LOOP---------------------------------
   4010ae:	c6 44 24 16 00       	movb   $0x0,0x16(%rsp) # '\0' ,end of string
-  4010b3:	be 5e 24 40 00       	mov    $0x40245e,%esi # x/s 0x40245e -> "flyers",1st arg in <string_not_equal> 
-  4010b8:	48 8d 7c 24 10       	lea    0x10(%rsp),%rdi # 2nd arg in <string_not_equal>
+  4010b3:	be 5e 24 40 00       	mov    $0x40245e,%esi # x/s 0x40245e -> "flyers",1st arg in <strings_not_equal> 
+  4010b8:	48 8d 7c 24 10       	lea    0x10(%rsp),%rdi # 2nd arg in <strings_not_equal>
   4010bd:	e8 76 02 00 00       	call   401338 <strings_not_equal> # if equal -> %rax == 0
   4010c2:	85 c0                	test   %eax,%eax
   4010c4:	74 13                	je     4010d9 <phase_5+0x77>
@@ -620,23 +620,23 @@ Disassembly of section .text:
   401201:	41 5e                	pop    %r14
   401203:	c3                   	ret    
 
-0000000000401204 <fun7>:
+0000000000401204 <fun7>: # %rdi %rsi
   401204:	48 83 ec 08          	sub    $0x8,%rsp
-  401208:	48 85 ff             	test   %rdi,%rdi
+  401208:	48 85 ff             	test   %rdi,%rdi # %rdi == 0x6030f0
   40120b:	74 2b                	je     401238 <fun7+0x34>
-  40120d:	8b 17                	mov    (%rdi),%edx
-  40120f:	39 f2                	cmp    %esi,%edx
-  401211:	7e 0d                	jle    401220 <fun7+0x1c>
-  401213:	48 8b 7f 08          	mov    0x8(%rdi),%rdi
+  40120d:	8b 17                	mov    (%rdi),%edx # %edx == "$"->0x24
+  40120f:	39 f2                	cmp    %esi,%edx 
+  401211:	7e 0d                	jle    401220 <fun7+0x1c> # if %edx <= %esi(input),jmp
+  401213:	48 8b 7f 08          	mov    0x8(%rdi),%rdi # %rdi == 0x603210(0x63) -> 0x0
   401217:	e8 e8 ff ff ff       	call   401204 <fun7>
-  40121c:	01 c0                	add    %eax,%eax
+  40121c:	01 c0                	add    %eax,%eax # %eax >>= 1
   40121e:	eb 1d                	jmp    40123d <fun7+0x39>
-  401220:	b8 00 00 00 00       	mov    $0x0,%eax
-  401225:	39 f2                	cmp    %esi,%edx
+  401220:	b8 00 00 00 00       	mov    $0x0,%eax 
+  401225:	39 f2                	cmp    %esi,%edx # if %esi == %edx,return val(%eax) is 0
   401227:	74 14                	je     40123d <fun7+0x39>
-  401229:	48 8b 7f 10          	mov    0x10(%rdi),%rdi
+  401229:	48 8b 7f 10          	mov    0x10(%rdi),%rdi # %rdi = 0x603130
   40122d:	e8 d2 ff ff ff       	call   401204 <fun7>
-  401232:	8d 44 00 01          	lea    0x1(%rax,%rax,1),%eax
+  401232:	8d 44 00 01          	lea    0x1(%rax,%rax,1),%eax # %eax = %eax >> 1 + 0x1
   401236:	eb 05                	jmp    40123d <fun7+0x39>
   401238:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
   40123d:	48 83 c4 08          	add    $0x8,%rsp
@@ -647,20 +647,20 @@ Disassembly of section .text:
   401243:	e8 56 02 00 00       	call   40149e <read_line>
   401248:	ba 0a 00 00 00       	mov    $0xa,%edx
   40124d:	be 00 00 00 00       	mov    $0x0,%esi
-  401252:	48 89 c7             	mov    %rax,%rdi
+  401252:	48 89 c7             	mov    %rax,%rdi # %rax == 0x603960, store the addr of input string
   401255:	e8 76 f9 ff ff       	call   400bd0 <strtol@plt>
   40125a:	48 89 c3             	mov    %rax,%rbx
   40125d:	8d 40 ff             	lea    -0x1(%rax),%eax
-  401260:	3d e8 03 00 00       	cmp    $0x3e8,%eax
+  401260:	3d e8 03 00 00       	cmp    $0x3e8,%eax # 0x3e8 -> 1000, %eax should <= 1000
   401265:	76 05                	jbe    40126c <secret_phase+0x2a>
   401267:	e8 ce 01 00 00       	call   40143a <explode_bomb>
   40126c:	89 de                	mov    %ebx,%esi
-  40126e:	bf f0 30 60 00       	mov    $0x6030f0,%edi
+  40126e:	bf f0 30 60 00       	mov    $0x6030f0,%edi # x 0x6030f0 -> "$"
   401273:	e8 8c ff ff ff       	call   401204 <fun7>
-  401278:	83 f8 02             	cmp    $0x2,%eax
+  401278:	83 f8 02             	cmp    $0x2,%eax # if %eax == 2, jmp to success addr
   40127b:	74 05                	je     401282 <secret_phase+0x40>
   40127d:	e8 b8 01 00 00       	call   40143a <explode_bomb>
-  401282:	bf 38 24 40 00       	mov    $0x402438,%edi
+  401282:	bf 38 24 40 00       	mov    $0x402438,%edi # success defuse
   401287:	e8 84 f8 ff ff       	call   400b10 <puts@plt>
   40128c:	e8 33 03 00 00       	call   4015c4 <phase_defused>
   401291:	5b                   	pop    %rbx
@@ -931,7 +931,7 @@ Disassembly of section .text:
   401604:	be 22 26 40 00       	mov    $0x402622,%esi
   401609:	48 8d 7c 24 10       	lea    0x10(%rsp),%rdi
   40160e:	e8 25 fd ff ff       	call   401338 <strings_not_equal>
-  401613:	85 c0                	test   %eax,%eax
+  401613:	85 c0                	test   %eax,%eax # not equal -> %eax == 1 -> jne
   401615:	75 1e                	jne    401635 <phase_defused+0x71>
   401617:	bf f8 24 40 00       	mov    $0x4024f8,%edi
   40161c:	e8 ef f4 ff ff       	call   400b10 <puts@plt>
