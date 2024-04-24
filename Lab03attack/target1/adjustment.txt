@@ -1,0 +1,11 @@
+to run ./ctarget -q correctly
+
+#1:export LD_PRELOAD=./printf.so (in terminal)
+
+to run ./ctarget correctly in gdb
+
+#2:set environment LD_PRELOAD=./printf.so
+   set args -q
+   
+   run -q < c1_str.txt
+
