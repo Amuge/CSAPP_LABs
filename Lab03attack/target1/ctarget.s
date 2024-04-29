@@ -802,14 +802,14 @@ Disassembly of section .text:
   4017f9:	00 00 00 
   4017fc:	3b 3d e2 2c 20 00    	cmp    0x202ce2(%rip),%edi        # 6044e4 <cookie>
   401802:	75 20                	jne    401824 <touch2+0x38>
-  401804:	be e8 30 40 00       	mov    $0x4030e8,%esi # success msg -> "You called ....."
+  401804:	be e8 30 40 00       	mov    $0x4030e8,%esi # success msg -> "Touch2! You called ....."
   401809:	bf 01 00 00 00       	mov    $0x1,%edi
   40180e:	b8 00 00 00 00       	mov    $0x0,%eax
   401813:	e8 d8 f5 ff ff       	call   400df0 <__printf_chk@plt>
   401818:	bf 02 00 00 00       	mov    $0x2,%edi
   40181d:	e8 6b 04 00 00       	call   401c8d <validate>
   401822:	eb 1e                	jmp    401842 <touch2+0x56>
-  401824:	be 10 31 40 00       	mov    $0x403110,%esi
+  401824:	be 10 31 40 00       	mov    $0x403110,%esi # "Misfire ...."
   401829:	bf 01 00 00 00       	mov    $0x1,%edi
   40182e:	b8 00 00 00 00       	mov    $0x0,%eax
   401833:	e8 b8 f5 ff ff       	call   400df0 <__printf_chk@plt>
@@ -1111,7 +1111,7 @@ Disassembly of section .text:
   401c97:	74 6b                	je     401d04 <validate+0x77>
   401c99:	39 3d 3d 28 20 00    	cmp    %edi,0x20283d(%rip)        # 6044dc <vlevel>
   401c9f:	74 14                	je     401cb5 <validate+0x28>
-  401ca1:	bf 32 32 40 00       	mov    $0x403232,%edi
+  401ca1:	bf 32 32 40 00       	mov    $0x403232,%edi # "Mismatched ..."
   401ca6:	e8 15 f0 ff ff       	call   400cc0 <puts@plt>
   401cab:	b8 00 00 00 00       	mov    $0x0,%eax
   401cb0:	e8 56 fd ff ff       	call   401a0b <check_fail>
@@ -1119,7 +1119,7 @@ Disassembly of section .text:
   401cbb:	39 fa                	cmp    %edi,%edx
   401cbd:	74 20                	je     401cdf <validate+0x52>
   401cbf:	89 f9                	mov    %edi,%ecx
-  401cc1:	be 70 33 40 00       	mov    $0x403370,%esi
+  401cc1:	be 70 33 40 00       	mov    $0x403370,%esi # "Check level %d != attack level %d\n"
   401cc6:	bf 01 00 00 00       	mov    $0x1,%edi
   401ccb:	b8 00 00 00 00       	mov    $0x0,%eax
   401cd0:	e8 1b f1 ff ff       	call   400df0 <__printf_chk@plt>
@@ -1128,14 +1128,14 @@ Disassembly of section .text:
   401cdf:	0f be 15 22 34 20 00 	movsbl 0x203422(%rip),%edx        # 605108 <target_prefix>
   401ce6:	41 b8 00 45 60 00    	mov    $0x604500,%r8d
   401cec:	89 f9                	mov    %edi,%ecx
-  401cee:	be 50 32 40 00       	mov    $0x403250,%esi
+  401cee:	be 50 32 40 00       	mov    $0x403250,%esi # "PASS"
   401cf3:	bf 01 00 00 00       	mov    $0x1,%edi
   401cf8:	b8 00 00 00 00       	mov    $0x0,%eax
   401cfd:	e8 ee f0 ff ff       	call   400df0 <__printf_chk@plt>
   401d02:	eb 49                	jmp    401d4d <validate+0xc0>
   401d04:	39 3d d2 27 20 00    	cmp    %edi,0x2027d2(%rip)        # 6044dc <vlevel>
   401d0a:	74 18                	je     401d24 <validate+0x97>
-  401d0c:	bf 32 32 40 00       	mov    $0x403232,%edi
+  401d0c:	bf 32 32 40 00       	mov    $0x403232,%edi # "Misamatched..."
   401d11:	e8 aa ef ff ff       	call   400cc0 <puts@plt>
   401d16:	89 de                	mov    %ebx,%esi
   401d18:	bf 00 00 00 00       	mov    $0x0,%edi
@@ -1143,7 +1143,7 @@ Disassembly of section .text:
   401d22:	eb 29                	jmp    401d4d <validate+0xc0>
   401d24:	0f be 0d dd 33 20 00 	movsbl 0x2033dd(%rip),%ecx        # 605108 <target_prefix>
   401d2b:	89 fa                	mov    %edi,%edx
-  401d2d:	be 98 33 40 00       	mov    $0x403398,%esi
+  401d2d:	be 98 33 40 00       	mov    $0x403398,%esi # "Valid solution for ...."
   401d32:	bf 01 00 00 00       	mov    $0x1,%edi
   401d37:	b8 00 00 00 00       	mov    $0x0,%eax
   401d3c:	e8 af f0 ff ff       	call   400df0 <__printf_chk@plt>
