@@ -91,7 +91,10 @@ void useCache(size_t address, int is_modify)
         }
         else
         {
-            printf("miss\n");
+            if (lru_time != -1)
+                printf("miss eviction\n");
+            else
+                printf("miss\n");
         }
     }
 
