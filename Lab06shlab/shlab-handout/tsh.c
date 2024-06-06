@@ -189,8 +189,8 @@ void eval(char *cmdline)
     if (!builtin_cmd(argv))
     {
         sigprocmask(SIG_BLOCK, &mask_child, &prev_all);
-        pid = fork();
-        if (pid == 0)
+        // pid = fork();
+        if ((pid = fork()) == 0)
         {
             setpgid(0, 0); // To ensure there only one process in the foreground process group
             sigprocmask(SIG_SETMASK, &prev_all, NULL);
